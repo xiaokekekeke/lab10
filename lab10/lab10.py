@@ -29,7 +29,7 @@ def main():
         return
     
     # 主标题 - 替换为您自己的名字
-    st.title("加州房屋数据 (1990) - 您的名字")
+    st.title("加州房屋数据 (1990) - 王启润")
     
     # 价格滑块
     st.subheader("最低房屋中位数价格")
@@ -119,3 +119,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
