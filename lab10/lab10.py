@@ -2,12 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# 设置matplotlib以避免GUI错误
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # 设置页面配置
 st.set_page_config(page_title="加州房屋数据", layout="wide")
 
@@ -18,11 +12,11 @@ def load_data():
         df = pd.read_csv('housing.csv')
         return df
     except FileNotFoundError:
-        st.error(" 错误：找不到 'housing.csv' 文件！")
+        st.error("❌ 错误：找不到 'housing.csv' 文件！")
         st.stop()
         return pd.DataFrame()
     except Exception as e:
-        st.error(f" 加载数据时出错：{str(e)}")
+        st.error(f"❌ 加载数据时出错：{str(e)}")
         st.stop()
         return pd.DataFrame()
 
@@ -103,16 +97,17 @@ def main():
             st.metric("平均价格", f"${filtered_df['median_house_value'].mean():,.0f}")
             st.metric("平均收入", f"{filtered_df['median_income'].mean():.2f}")
     
-    # 显示直方图
+    # 使用Streamlit原生图表替代matplotlib直方图
     st.subheader("房屋中位数价值分布")
     if not filtered_df.empty:
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.hist(filtered_df['median_house_value'], bins=30, alpha=0.7, color='skyblue', edgecolor='black')
-        ax.set_xlabel('房屋中位数价值 ($)')
-        ax.set_ylabel('频数')
-        ax.set_title('房屋价值分布直方图')
-        ax.grid(True, alpha=0.3)
-        st.pyplot(fig)
+        # 方法1：使用st.bar_chart显示分布
+        value_counts = filtered_df['median_house_value'].value_counts().sort_index()
+        st.bar_chart(value_counts.head(30))
+        
+        # 方法2：显示数据统计
+        with st.expander("查看详细统计"):
+            st.write(f"价格范围: ${filtered_df['median_house_value'].min():,} - ${filtered_df['median_house_value'].max():,}")
+            st.write(f"中位数价格: ${filtered_df['median_house_value'].median():,}")
     else:
         st.warning("没有数据可用于生成直方图")
     
